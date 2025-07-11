@@ -1,14 +1,17 @@
 const fs = require("fs");
 const csv = require("csv-parser");
 const { v4: uuidv4 } = require("uuid"); // For generating unique IDs
-
+const test = "git test";
 // Define a mapping of error statuses to mistake types
 const mistakeTypesMap = {
-  "Major Count": "Count Error",
-  "Minor Count": "Count Error",
-  Packaging: "Packaging Error",
-  Profile: "Wrong Item",
-  "missing-item": "Missing Item",
+  "Major Count": "Major Count",
+  "Minor Count": "Minor Count",
+  "Major Count (off by 6% or more) (To calculate divide the ammount off by the total they shouldve pulled) (Ex. shouldve pulled 17 but actually pulled 14. they were three short so 3/17 =.176. .176x100 is 17.6 so they were 17.6% off so this is a major count error.)":
+    "Major Count",
+  "Minor Count (off by 5% or less) (To calculate divide the ammount off by the total they shouldve pulled then multiply by 100) (Ex. shouldve pulled 21 but actually pulled 20. they were three short so 1/21 =.047. .047x100 in 4.7  so they were 4.7% off so this is a minor count error.)":
+    "Minor Count",
+  Packaging: "Packaging",
+  Profile: "Profile",
   Damage: "Damage",
   // Add more as needed
 };
@@ -31,8 +34,7 @@ fs.createReadStream("data.csv")
       __v: 0,
       // Add mistake type dynamically based on the error status
       ...(errorStatus !== "It was Correct" && {
-        mistakeType:
-          mistakeTypesMap[errorStatus.toLowerCase()] || "Unknown Error",
+        mistakeType: mistakeTypesMap[errorStatus] || "Unknown Error",
       }),
     };
     results.push(transformedRow);
@@ -42,3 +44,5 @@ fs.createReadStream("data.csv")
     fs.writeFileSync("output.json", JSON.stringify(results, null, 2));
     console.log("Data transformed and saved to output.json");
   });
+
+("mistakeTypesMap[errorStatus.toLowerCase()]");
